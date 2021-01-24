@@ -3,7 +3,6 @@ package com.example.pdfbox
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.ImageType
 import org.apache.pdfbox.rendering.PDFRenderer
-import org.apache.pdfbox.tools.imageio.ImageIOUtil
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -32,16 +30,23 @@ class HtmlController {
         @RequestParam("upload_file") multipartFile: MultipartFile
     ): String {
         val document : PDDocument = PDDocument.load(multipartFile.inputStream)
-        val pdfRenderer : PDFRenderer = PDFRenderer(document)
-        val bim : BufferedImage = pdfRenderer.renderImageWithDPI(0, 300f, ImageType.RGB)
-        val baos: ByteArrayOutputStream = ByteArrayOutputStream()
-//        ImageIOUtil.writeImage(bim, "output.png", 300)
-        ImageIO.write(bim, "png", baos)
-        baos.flush()
+        val pdfRenderer = PDFRenderer(document)
+
+        var base64Images = ArrayList<String>()
+        for (page in 1..document.numberOfPages) {
+            base64Images.add(getImageBase64(pdfRenderer, page))
+        }
 
         model["title"] = "PDFBox Submitted"
-        model["isSubmitted"] = true
-        model["base64"] = Base64.getEncoder().encodeToString(baos.toByteArray())
+        model["base64images"] = base64Images
         return "index"
+    }
+
+    private fun getImageBase64(pdfRenderer: PDFRenderer, pageNum: Int): String {
+        val bufferedImage : BufferedImage = pdfRenderer.renderImageWithDPI(pageNum - 1, 300f, ImageType.RGB)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream)
+        byteArrayOutputStream.flush()
+        return Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray())
     }
 }
