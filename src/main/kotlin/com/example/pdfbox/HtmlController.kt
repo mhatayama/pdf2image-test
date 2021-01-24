@@ -29,16 +29,19 @@ class HtmlController {
         model: Model,
         @RequestParam("upload_file") multipartFile: MultipartFile
     ): String {
-        val document : PDDocument = PDDocument.load(multipartFile.inputStream)
-        val pdfRenderer = PDFRenderer(document)
-
-        var base64Images = ArrayList<String>()
-        for (page in 1..document.numberOfPages) {
-            base64Images.add(getImageBase64(pdfRenderer, page))
+        var document:PDDocument
+        try {
+            document = PDDocument.load(multipartFile.inputStream)
+        } catch (e: Exception) {
+            model["title"] = "PDFBox Error"
+            return "index"
         }
 
+        val pdfRenderer = PDFRenderer(document)
         model["title"] = "PDFBox Submitted"
-        model["base64images"] = base64Images
+        model["base64images"] = (1..document.numberOfPages).map {
+            getImageBase64(pdfRenderer, it)
+        }
         return "index"
     }
 
