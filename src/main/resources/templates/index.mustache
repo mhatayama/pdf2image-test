@@ -1,0 +1,14 @@
+{{> header}}
+
+<h1>{{title}}</h1>
+
+<form enctype="multipart/form-data" method="post">
+    <input type="file" name="upload_file" accept="application/pdf"><br>
+    <input type="submit" value="Submit">
+</form>
+
+{{#isSubmitted}}
+    <img src="data:image/png;base64,{{base64}}" width="100%">
+{{/isSubmitted}}
+
+{{> footer}}
