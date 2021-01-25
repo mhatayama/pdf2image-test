@@ -2,13 +2,9 @@
 
 <h1>{{title}}</h1>
 
-<form enctype="multipart/form-data" method="post">
-    <input type="file" name="upload_file" accept="application/pdf"><br>
-    <input type="submit" value="Submit">
-</form>
-
-{{#base64images}}
-    <img src="data:image/png;base64,{{.}}" width="100%">
-{{/base64images}}
+<ul>
+    <li><a href="/pdfbox">PDFBox</a></li>
+    <li><s>OpenPDF</s></li>
+</ul>
 
 {{> footer}}

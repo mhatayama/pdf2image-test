@@ -1,4 +1,4 @@
-package com.example.pdfbox
+package com.example.pdfbox.controller
 
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.ImageType
@@ -16,33 +16,33 @@ import java.util.*
 import javax.imageio.ImageIO
 
 @Controller
-class HtmlController {
-    @GetMapping("/")
+class PdfBoxController {
+    @GetMapping("/pdfbox")
     fun index(model: Model): String {
-        model["title"] = "PDFBox"
-        model["isSubmitted"] = false
-        return "index"
+        model["title"] = "PDFBox Test"
+        return "pdfbox"
     }
 
-    @PostMapping("/")
+    @PostMapping("/pdfbox")
     fun submit(
         model: Model,
         @RequestParam("upload_file") multipartFile: MultipartFile
     ): String {
-        var document:PDDocument
+        model["title"] = "PDFBox Test"
+
+        var document: PDDocument
         try {
             document = PDDocument.load(multipartFile.inputStream)
         } catch (e: Exception) {
-            model["title"] = "PDFBox Error"
-            return "index"
+            model["message"] = "File Error"
+            return "pdfbox"
         }
 
         val pdfRenderer = PDFRenderer(document)
-        model["title"] = "PDFBox Submitted"
         model["base64images"] = (1..document.numberOfPages).map {
             getImageBase64(pdfRenderer, it)
         }
-        return "index"
+        return "pdfbox"
     }
 
     private fun getImageBase64(pdfRenderer: PDFRenderer, pageNum: Int): String {

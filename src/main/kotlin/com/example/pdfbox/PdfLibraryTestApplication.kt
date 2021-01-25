@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class PdfboxApplication
+class PdfLibraryTestApplication
 
 fun main(args: Array<String>) {
-	runApplication<PdfboxApplication>(*args)
+	runApplication<PdfLibraryTestApplication>(*args)
 }
